@@ -9,7 +9,6 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
   const [copied, setCopied] = useState("");
   const {data: session } = useSession();
   const pathName = usePathname();
-  const router = useRouter();
 
   console.log(post);
 
