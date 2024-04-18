@@ -3,21 +3,45 @@
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
+const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete, searchText }) => {
   const [copied, setCopied] = useState("");
   const {data: session } = useSession();
   const pathName = usePathname();
+  const [highlightedPrompt, setHighlightedPrompt] = useState(null);
 
-  console.log(post);
+  useEffect(() => {
+    const regex = new RegExp(searchText, "gi");
+    const parts = post.prompt.split(regex);
+    console.log('parts: ',parts)
+    const highlightedParts = post.prompt.match(regex);
+    console.log('highlited: ',highlightedParts)
+
+    const merged = parts.map((part, index) => {
+      if (index < parts.length - 1) {
+        return (
+          <React.Fragment key={index}>
+            {part}
+            <span className="underline text-yellow-500">{highlightedParts[index]}</span>
+          </React.Fragment>
+        );
+      } else {
+        return part;
+      }
+    });
+
+    console.log('merged: ', merged);
+
+    setHighlightedPrompt(merged);
+  }, [post.prompt, searchText]);
 
   const handleCopy = () => {
     setCopied(post.prompt);
     navigator.clipboard.writeText(post.prompt);
     setTimeout(() => setCopied(""), 3000)
   }
-  
+
   return (
     <div className="prompt_card">
       <div className="flex justify-between items-start gap-5">
@@ -50,7 +74,9 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
           />
         </div>
       </div>
-      <p className="my-4 font-satoshi text-sm text-gray-700">{post.prompt}</p>
+      <p className="my-4 font-satoshi text-sm text-gray-700">
+        {highlightedPrompt}
+      </p>
       <p onClick={() => handleTagClick && handleTagClick(post.tag)} className="font-inter text-sm blue_gradient cursor-pointer">{post.tag}</p>
       {
         session?.user.id === post.creator._id && pathName ==='/profile' && (

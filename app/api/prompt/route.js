@@ -5,8 +5,12 @@ export const GET = async (request) => {
     try {
         await connectToDB();
 
-        //populate also fethces the corresponding creator data from users document
-        const prompts = await Prompt.find({}).populate('creator');
+        const { searchParams } = new URL(request.url);
+        const searchTerm = searchParams.get('searchTerm');
+
+        const prompts = await Prompt.find({
+            prompt: { $regex: searchTerm, $options: 'i' }
+        }).populate('creator');
 
         return new Response(JSON.stringify(prompts), {status: 200})
     } catch (error) {
