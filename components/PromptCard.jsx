@@ -38,9 +38,6 @@ const PromptCard = ({
         return part;
       }
     });
-
-    console.log("merged: ", merged);
-
     setHighlightedPrompt(merged);
   }, [post.prompt, searchText]);
 
@@ -63,9 +60,6 @@ const PromptCard = ({
         return part;
       }
     });
-
-    console.log("merged: ", merged);
-
     setHighlightedTag(merged);
   }, [post.tag, searchText]);
 
