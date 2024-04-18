@@ -9,7 +9,10 @@ export const GET = async (request) => {
         const searchTerm = searchParams.get('searchTerm');
 
         const prompts = await Prompt.find({
-            prompt: { $regex: searchTerm, $options: 'i' }
+            $or: [
+                { prompt: { $regex: searchTerm, $options: 'i' } },
+                { tag: { $regex: searchTerm, $options: 'i' } }
+            ]
         }).populate('creator');
 
         return new Response(JSON.stringify(prompts), {status: 200})

@@ -29,6 +29,7 @@ const Feed = () => {
     fetchPosts();
   }, [searchText])
 
+
   return (
     <section className="feed">
       <form className="relative w-full flex-center">
@@ -42,7 +43,7 @@ const Feed = () => {
         />
       </form>
 
-      <PromptCardList searchText={searchText} data={posts} handleTagClick={() => {}} />
+      <PromptCardList searchText={searchText} data={posts} handleTagClick={setSearchText} />
     </section>
   );
 };

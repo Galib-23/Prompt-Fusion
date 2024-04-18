@@ -10,13 +10,12 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete, searchText
   const {data: session } = useSession();
   const pathName = usePathname();
   const [highlightedPrompt, setHighlightedPrompt] = useState(null);
+  const [highlightedTag, setHighlightedTag] = useState(null);
 
   useEffect(() => {
     const regex = new RegExp(searchText, "gi");
     const parts = post.prompt.split(regex);
-    console.log('parts: ',parts)
     const highlightedParts = post.prompt.match(regex);
-    console.log('highlited: ',highlightedParts)
 
     const merged = parts.map((part, index) => {
       if (index < parts.length - 1) {
@@ -35,6 +34,29 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete, searchText
 
     setHighlightedPrompt(merged);
   }, [post.prompt, searchText]);
+
+  useEffect(() => {
+    const regex = new RegExp(searchText, "gi");
+    const parts = post.tag.split(regex);
+    const highlightedParts = post.tag.match(regex);
+
+    const merged = parts.map((part, index) => {
+      if (index < parts.length - 1) {
+        return (
+          <React.Fragment key={index}>
+            {part}
+            <span className="underline text-yellow-500">{highlightedParts[index]}</span>
+          </React.Fragment>
+        );
+      } else {
+        return part;
+      }
+    });
+
+    console.log('merged: ', merged);
+
+    setHighlightedTag(merged);
+  }, [post.tag, searchText]);
 
   const handleCopy = () => {
     setCopied(post.prompt);
@@ -77,7 +99,7 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete, searchText
       <p className="my-4 font-satoshi text-sm text-gray-700">
         {highlightedPrompt}
       </p>
-      <p onClick={() => handleTagClick && handleTagClick(post.tag)} className="font-inter text-sm blue_gradient cursor-pointer">{post.tag}</p>
+      <p onClick={() => handleTagClick && handleTagClick(post.tag.toString().slice(1))} className="font-inter text-sm blue_gradient cursor-pointer">{highlightedTag}</p>
       {
         session?.user.id === post.creator._id && pathName ==='/profile' && (
           <div className="mt-5 flex-center gap-4 border-t border-gray-100">
